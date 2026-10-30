@@ -83,7 +83,7 @@ func printCheatSheet(cheatSheetName string) {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Error: Please provide at least one argument! \n For example: cheetsheet help")
+		fmt.Println("Error: Please provide at least one argument! \n For example: cli-image-tb help")
 
 		return
 	}
@@ -111,6 +111,10 @@ func main() {
 	}
 
 	if len(os.Args) < 3 {
+		fmt.Println("Error: Please insert the directory for the images!")
+	}
+
+	if len(os.Args) < 4 {
 		fmt.Println("Error: There should be at least one url to an image!")
 	}
 
