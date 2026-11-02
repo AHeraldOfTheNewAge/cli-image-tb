@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -81,23 +82,49 @@ func printCheatSheet(cheatSheetName string) {
 	fmt.Printf("\n%s================%s\n", ColorCyan, ColorReset)
 }
 
+func isValidDir(dir string) bool {
+	info, err := os.Stat(dir)
+
+	if errors.Is(err, os.ErrNotExist) {
+		return false
+	}
+
+	return err == nil && info.IsDir()
+}
+
+func isValidImage(dir string, imagePath string) bool {
+	fmt.Println(dir, imagePath)
+
+	return true
+}
+
 func main() {
-	if len(os.Args) < 2 {
+	switch {
+	case len(os.Args) < 2:
 		fmt.Println("Error: Please provide at least one argument! \n For example: cli-image-tb help")
+
+		return
+	case len(os.Args) < 3:
+		fmt.Println("Error: Please insert the directory for the images!")
+
+		return
+	case len(os.Args) < 4:
+		fmt.Println("Error: Please insert the directory for the thumbnail converted images!")
+
+		return
+	case len(os.Args) < 5:
+		fmt.Println("Error: There should be at least one url to an image!")
 
 		return
 	}
 
-	for i, v := range os.Args {
-		fmt.Println(i, v)
-	}
-
+	// Check the first argument, wich is either help, either the thumbnail size to get returned!
 	var firstArg string = os.Args[1]
 
 	firstArg = strings.ToLower(firstArg)
 
 	if firstArg == "help" {
-		fmt.Println("//TODO")
+		fmt.Println("//TODO cli-image-tb [thumbnail-size] [dir] [destination-dir] [image-name]..")
 
 		return
 	}
@@ -110,15 +137,25 @@ func main() {
 		return
 	}
 
-	if len(os.Args) < 3 {
-		fmt.Println("Error: Please insert the directory for the images!")
+	if !isValidDir(os.Args[2]) {
+		fmt.Println("Error: Please insert a valid directory for the images to be converted!")
+
+		return
 	}
 
-	if len(os.Args) < 4 {
-		fmt.Println("Error: There should be at least one url to an image!")
+	if !isValidDir(os.Args[3]) {
+		fmt.Println("Error: Please insert a valid directory as destionation for the converted images!")
+
+		return
 	}
 
-	return
+	for i := 4; i < len(os.Args); i++ { // Check the images to be converted!!
+		if !isValidImage(os.Args[2], os.Args[i]) {
+			fmt.Println("Error: invalid image", os.Args[i])
 
-	printCheatSheet(firstArg)
+			return
+		}
+
+		fmt.Println(os.Args[i], i)
+	}
 }
